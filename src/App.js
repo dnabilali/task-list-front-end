@@ -1,7 +1,10 @@
 // import React from 'react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TaskList from './components/TaskList.js';
 import './App.css';
+import axios from 'axios';
+
+const urlEndpoint = 'https://task-list-api-c17.herokuapp.com';
 
 // const TASKS = [
 //   {
@@ -16,19 +19,30 @@ import './App.css';
 //   },
 // ];
 
+const getTasks = () => {
+  return axios
+    .get(`${urlEndpoint}/tasks`)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.log('error');
+      return error;
+    });
+};
+
 const App = () => {
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      title: 'Mow the lawn',
-      isComplete: false,
-    },
-    {
-      id: 2,
-      title: 'Cook Pasta',
-      isComplete: true,
-    },
-  ]);
+  const [tasks, setTasks] = useState([]);
+
+  const getAllTasks = () => {
+    getTasks().then((tasks) => {
+      setTasks(tasks);
+    });
+  };
+
+  useEffect(() => {
+    getAllTasks();
+  }, []);
 
   const updateTasks = (updatedTask) => {
     const allUpdatedTasks = tasks.map((task) => {
